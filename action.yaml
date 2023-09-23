@@ -20,11 +20,16 @@ runs:
     - name: Check if Python 3 is installed
       id: check_python
       run: |
-        python3 --version && echo "Python3 is installed" || echo "Python3 is not installed"
-        echo "python_installed=$?" >> $GITHUB_ENV
+        if python3 --version; then
+          echo "Python3 is installed"
+          echo "python_installed=0" >> $GITHUB_ENV
+        else
+          echo "Python3 is not installed"
+          echo "python_installed=1" >> $GITHUB_ENV
+        fi
       shell: bash
     - name: Set up Python
-      if: env.python_installed != 0
+      if: env.python_installed == 1
       uses: actions/setup-python@v4
       with:
         python-version: '3.x'
@@ -38,7 +43,7 @@ runs:
         git diff --name-only "remotes/origin/${{ inputs.comparing_branch }}"
       shell: bash
     - name: Run Python script
-      run: python ${{ github.action_path }}/src/main.py --meta_file_name=${{ inputs.meta_file_name }} --keyword=${{ inputs.keyword }} --comparing_branch=${{ inputs.comparing_branch }}
+      run: python3 ${{ github.action_path }}/src/main.py --meta_file_name=${{ inputs.meta_file_name }} --keyword=${{ inputs.keyword }} --comparing_branch=${{ inputs.comparing_branch }}
       id: git-diff
       shell: bash
 
