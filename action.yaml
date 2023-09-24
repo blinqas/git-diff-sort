@@ -13,7 +13,9 @@ inputs:
   comparing_branch:
     description: 'Branch to compare with'
     required: false
-    default: ''
+  comparing_tag:
+    description: 'Tag to compare with'
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -43,7 +45,7 @@ runs:
         git diff --name-only "remotes/origin/${{ inputs.comparing_branch }}"
       shell: bash
     - name: Run Python script
-      run: python3 ${{ github.action_path }}/src/main.py --meta_file_name=${{ inputs.meta_file_name }} --keyword=${{ inputs.keyword }} --comparing_branch=${{ inputs.comparing_branch }}
+      run: python3 ${{ github.action_path }}/src/main.py --meta_file_name=${{ inputs.meta_file_name }} --keyword=${{ inputs.keyword }} --comparing_branch=${{ inputs.comparing_branch }} --comparing_tag=${{ inputs.comparing_tag }}
       id: git-diff
       shell: bash
 

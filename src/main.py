@@ -32,6 +32,12 @@ def read_yaml(folder: str, file_name: str) -> dict:
     except yaml.YAMLError as exc:
         logging.error(f"Error in configuration file: {exc}")
         return {}
+    
+def get_default_branch():
+    command = "git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
+    result = subprocess.run(command, stdout=subprocess.PIPE, text=True, shell=True)
+    return result.stdout.strip()
+
 
 # Initialize metadata dictionary
 metadata = {}
@@ -40,15 +46,30 @@ metadata = {}
 parser = argparse.ArgumentParser(description='Process Git diff and sort folders.')
 parser.add_argument('--meta_file_name', type=str, help='Name of the YAML metadata file', default=None)
 parser.add_argument('--keyword', type=str, help='Keyword to look for in the YAML file', default=None)
-parser.add_argument('--comparing_branch', type=str, help='Branch to compare with', default='main')
+parser.add_argument('--comparing_branch', type=str, help='Branch to compare with', default=None)
+parser.add_argument('--comparing_tag', type=str, help='Tag to compare with', default=None)
 
 args = parser.parse_args()
+
+if args.comparing_branch and args.comparing_tag:
+    raise argparse.ArgumentError(None, "You can only use one of comparing_branch or comparing_tag inputs, not both.")
+
 
 # Get Git Diff
 try:
     working_directory = os.getenv('GITHUB_WORKSPACE')
     print(f"working directory: {working_directory}")
-    git_diff_output = run_git_command(f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff remotes/origin/{args.comparing_branch} --name-only")
+
+    default_branch = get_default_branch()
+
+    if args.comparing_branch:
+        git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff remotes/origin/{args.comparing_branch} --name-only"
+    elif args.comparing_tag:
+        git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff {args.comparing_tag} --name-only"
+    else:
+        git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff remotes/origin/{default_branch} --name-only"
+
+    git_diff_output = run_git_command(git_diff_command)
     print(f"git diff output: {git_diff_output}")
 except Exception as e:
     logging.error(f"An error occurred while running the git command: {e}")
