@@ -86,7 +86,7 @@ jobs:
           pr_id=${pr_url##*/}
         else
           # Update the existing pull request
-          gh pr comment "$existing_pr" --body "$pr_body"
+          gh pr comment "$existing_pr" --body "PR Updated with latest push"
           pr_id="$existing_pr"
         fi
         if [ -z "$pr_id" ]; then
