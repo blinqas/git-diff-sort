@@ -18,7 +18,8 @@
 |-----------------------|-----------------------------------------------------------|--------------------|----------|
 | `meta_file_name`      | Name of the YAML file containing metadata. If it exist in the diff folder, it will be sorted in the outputs based on metadata | None               | No       |
 | `keyword`             | Keyword to look for in the YAML file.                     | None               | No       |
-| `comparing_branch`    | Branch to compare with. If not provided, the action will dynamically determine the repository's default branch. | Default branch | No       |
+| `comparing_branch`    | Branch to compare with. You can also use the word `default` to compare with the default branch. | None | No       |
+| `comparing_tag`    | Tag to compare with. You can also use the word `latest` to compare with the latest tag.  | None | No       |
 
 ## Outputs
 
@@ -30,17 +31,18 @@
 | `folders_sorted_alpha_dec`  | A list of distinct folders sorted alphabetically in a descending order.                         |
 | `folders_sorted_meta_inc`   | A list of distinct folders sorted based on metadata in ascending order.                         |
 | `folders_sorted_meta_dec`   | A list of distinct folders sorted based on metadata in descending order.                        |
-| `json_output`               | All outputs above json converted.                                                               |
+| `json`               | All outputs above json converted.                                                               |
 
 ## Usage
 
 ```yaml
-- name: Run Git Diff Pro
+- name: Run Git Diff
   uses: blinqas/git-diff-sort@v1
   with:
     meta_file_name: 'metadata.yaml'
     keyword: 'execution_order'
-    comparing_branch: 'main'
+    comparing_tag: 'latest'
+    # comparing_branch: 'main'(you can only use comparing_branch or comparing_tag, not both)
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```

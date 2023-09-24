@@ -38,6 +38,17 @@ def get_default_branch():
     result = subprocess.run(command, stdout=subprocess.PIPE, text=True, shell=True)
     return result.stdout.strip()
 
+def get_latest_tag():
+    command = "git describe --tags `git rev-list --tags --max-count=1`"
+    result = subprocess.run(command, stdout=subprocess.PIPE, text=True, shell=True)
+    return result.stdout.strip()
+
+def get_default_remote():
+    command = "git remote"
+    result = subprocess.run(command, stdout=subprocess.PIPE, text=True, shell=True)
+    remotes = result.stdout.strip().split('\n')
+    return remotes[0] if remotes else 'origin'
+
 
 # Initialize metadata dictionary
 metadata = {}
@@ -58,16 +69,21 @@ if args.comparing_branch and args.comparing_tag:
 # Get Git Diff
 try:
     working_directory = os.getenv('GITHUB_WORKSPACE')
-    print(f"working directory: {working_directory}")
+    print(f"working directory: {working_directory}")    
 
+    default_remote = get_default_remote()
     default_branch = get_default_branch()
-
-    if args.comparing_branch:
-        git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff remotes/origin/{args.comparing_branch} --name-only"
+    if args.comparing_branch:        
+        if args.comparing_branch.lower() == 'default':            
+            git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff {default_branch} --name-only"
+        else:
+            git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff remotes/{default_remote}/{args.comparing_branch} --name-only"
     elif args.comparing_tag:
-        git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff {args.comparing_tag} --name-only"
-    else:
-        git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff remotes/origin/{default_branch} --name-only"
+        if args.comparing_tag.lower() == 'latest':
+            latest_tag = get_latest_tag()
+            git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff {latest_tag} --name-only"
+        else:
+            git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff {args.comparing_tag} --name-only"
 
     git_diff_output = run_git_command(git_diff_command)
     print(f"git diff output: {git_diff_output}")
