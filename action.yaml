@@ -36,7 +36,7 @@ runs:
       with:
         python-version: '3.x'
     - name: Install dependencies
-      run: pip install -r ${{ github.action_path }}/requirements.txt
+      run: pip3 install -r ${{ github.action_path }}/requirements.txt
       shell: bash
     - name: Git diff
       run: |
