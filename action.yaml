@@ -47,7 +47,7 @@ runs:
         echo $GITHUB_WORKSPACE
         IFS=',' read -ra exclude_dirs <<< "${{ inputs.excluded_directories }}"
         for d in "${exclude_dirs[@]}"; do
-            exclude_patterns+=(':!'${d}'/*')
+            exclude_patterns+=(\'':!'${d}'/*'\')
         done
         git diff --name-only "remotes/origin/${{ inputs.comparing_branch }}" "${exclude_patterns[@]}"
       shell: bash
