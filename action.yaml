@@ -16,6 +16,9 @@ inputs:
   comparing_tag:
     description: 'Tag to compare with'
     required: false
+  excluded_directories:
+    description: 'Comma separated list of directories to exclude from the git diff'
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -42,7 +45,11 @@ runs:
       run: |
         pwd
         echo $GITHUB_WORKSPACE
-        git diff --name-only "remotes/origin/${{ inputs.comparing_branch }}"
+        IFS=',' read -ra exclude_dirs <<< "${{ inputs.excluded_directories }}"
+        for d in "${exclude_dirs[@]}"; do
+            exclude_patterns+=(':!'${d}'/*')
+        done
+        git diff --name-only "remotes/origin/${{ inputs.comparing_branch }}" "${exclude_patterns[@]}"
       shell: bash
     - name: Run Python script
       run: python3 ${{ github.action_path }}/src/main.py --meta_file_name=${{ inputs.meta_file_name }} --keyword=${{ inputs.keyword }} --comparing_branch=${{ inputs.comparing_branch }} --comparing_tag=${{ inputs.comparing_tag }}
