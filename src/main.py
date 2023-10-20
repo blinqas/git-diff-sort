@@ -59,6 +59,7 @@ parser.add_argument('--meta_file_name', type=str, help='Name of the YAML metadat
 parser.add_argument('--keyword', type=str, help='Keyword to look for in the YAML file', default=None)
 parser.add_argument('--comparing_branch', type=str, help='Branch to compare with', default=None)
 parser.add_argument('--comparing_tag', type=str, help='Tag to compare with', default=None)
+parser.add_argument('--exclude_patterns', type=str, help='Patterns for paths to exclude from git dir', default=None)
 
 args = parser.parse_args()
 
@@ -85,7 +86,7 @@ try:
         else:
             git_diff_command = f"git --git-dir={working_directory}/.git --work-tree={working_directory} diff {args.comparing_tag} --name-only"
 
-    git_diff_output = run_git_command(git_diff_command)
+    git_diff_output = run_git_command(f"{git_diff_command} --name-only {args.exclude_patterns}")
     print(f"git diff output: {git_diff_output}")
 except Exception as e:
     logging.error(f"An error occurred while running the git command: {e}")
