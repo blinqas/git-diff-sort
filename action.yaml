@@ -42,7 +42,7 @@ runs:
       run: python3 -m pip install -r ${{ github.action_path }}/requirements.txt
       shell: bash
     - name: Git diff
-      id: git-diff
+      id: display-git-diff
       run: |
         IFS=',' read -ra exclude_dirs <<< "${{ inputs.excluded_directories }}"
         for d in "${exclude_dirs[@]}"; do
@@ -55,7 +55,7 @@ runs:
       run: |
         echo steps.git-diff.outputs.exclude_patterns_str #debug
         echo ${{ steps.git-diff.outputs.exclude_patterns_str }} #debug
-        python3 ${{ github.action_path }}/src/main.py --meta_file_name=${{ inputs.meta_file_name }} --keyword=${{ inputs.keyword }} --comparing_branch=${{ inputs.comparing_branch }} --comparing_tag=${{ inputs.comparing_tag }} --exclude_patterns="${{ steps.git-diff.outputs.exclude_patterns_str }}"
+        python3 ${{ github.action_path }}/src/main.py --meta_file_name=${{ inputs.meta_file_name }} --keyword=${{ inputs.keyword }} --comparing_branch=${{ inputs.comparing_branch }} --comparing_tag=${{ inputs.comparing_tag }} --exclude_patterns="${{ steps.display-git-diff.outputs.exclude_patterns_str }}"
       id: git-diff
       shell: bash
 
