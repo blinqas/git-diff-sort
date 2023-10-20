@@ -92,7 +92,7 @@ except Exception as e:
     git_diff_output = []
 
 # Extract distinct folders
-distinct_folders = list(set([os.path.dirname(path) for path in git_diff_output if path]))
+distinct_folders = list(set([os.path.dirname(path) for path in git_diff_output if path.strip()]))
 print(f"distinct_folders: {distinct_folders}")
 
 # Populate metadata dictionary by reading YAML files in each folder
@@ -110,8 +110,6 @@ for folder in distinct_folders:
     except Exception as e:
         logging.error(f"An error occurred while reading YAML for folder {folder}: {e}")
 
-print(f"folders_with_metadata: {folders_with_metadata}")
-print(f"folders_without_metadata: {folders_without_metadata}")
 
 # Sort folders
 folders_sorted_alpha_inc = sorted(distinct_folders)
@@ -119,19 +117,30 @@ folders_sorted_alpha_dec = sorted(distinct_folders, reverse=True)
 folders_sorted_meta_inc = sorted(folders_with_metadata, key=lambda x: metadata[x])
 folders_sorted_meta_dec = sorted(folders_with_metadata, key=lambda x: metadata[x], reverse=True)
 
-print(f"folders_sorted_alpha_inc: {folders_sorted_alpha_inc}")
-print(f"folders_sorted_alpha_dec: {folders_sorted_alpha_dec}")
-print(f"folders_sorted_meta_inc: {folders_sorted_meta_inc}")
-print(f"folders_sorted_meta_dec: {folders_sorted_meta_dec}")
+distinct_folders_str = json.dumps(distinct_folders).replace(" ", "")
+folders_with_metadata_str = json.dumps(folders_with_metadata).replace(" ", "")
+folders_without_metadata_str = json.dumps(folders_without_metadata).replace(" ", "")
+folders_sorted_alpha_inc_str = json.dumps(folders_sorted_alpha_inc).replace(" ", "")
+folders_sorted_alpha_dec_str = json.dumps(folders_sorted_alpha_dec).replace(" ", "")
+folders_sorted_meta_inc_str = json.dumps(folders_sorted_meta_inc).replace(" ", "")
+folders_sorted_meta_dec_str = json.dumps(folders_sorted_meta_dec).replace(" ", "")
+
+print(f"distinct_folders: {distinct_folders_str}")
+print(f"folders_with_metadata: {folders_with_metadata_str}")
+print(f"folders_without_metadata: {folders_without_metadata_str}")
+print(f"folders_sorted_alpha_inc: {folders_sorted_alpha_inc_str}")
+print(f"folders_sorted_alpha_dec: {folders_sorted_alpha_dec_str}")
+print(f"folders_sorted_meta_inc: {folders_sorted_meta_inc_str}")
+print(f"folders_sorted_meta_dec: {folders_sorted_meta_dec_str}")
 
 # Set Outputs
-set_output("distinct_folders", distinct_folders)
-set_output("folders_with_metadata", folders_with_metadata)
-set_output("folders_without_metadata", folders_without_metadata)
-set_output("folders_sorted_alpha_inc", folders_sorted_alpha_inc)
-set_output("folders_sorted_alpha_dec", folders_sorted_alpha_dec)
-set_output("folders_sorted_meta_inc", folders_sorted_meta_inc)
-set_output("folders_sorted_meta_dec", folders_sorted_meta_dec)
+set_output("distinct_folders", distinct_folders_str)
+set_output("folders_with_metadata", folders_with_metadata_str)
+set_output("folders_without_metadata", folders_without_metadata_str)
+set_output("folders_sorted_alpha_inc", folders_sorted_alpha_inc_str)
+set_output("folders_sorted_alpha_dec", folders_sorted_alpha_dec_str)
+set_output("folders_sorted_meta_inc", folders_sorted_meta_inc_str)
+set_output("folders_sorted_meta_dec", folders_sorted_meta_dec_str)
 
 # Convert lists to JSON
 json = json.dumps({
