@@ -43,14 +43,10 @@ runs:
       shell: bash
     - name: Git diff
       run: |
-        pwd
-        echo $GITHUB_WORKSPACE
         IFS=',' read -ra exclude_dirs <<< "${{ inputs.excluded_directories }}"
         for d in "${exclude_dirs[@]}"; do
             exclude_patterns+=(\'':!'${d}'/*'\')
         done
-        echo "Exclude patterns: ${exclude_patterns[@]}"
-        echo git diff --name-only "remotes/origin/${{ inputs.comparing_branch }}" "${exclude_patterns[@]}"
         git diff --name-only "remotes/origin/${{ inputs.comparing_branch }}" "${exclude_patterns[@]}"
       shell: bash
     - name: Run Python script
