@@ -156,7 +156,8 @@ folders_without_metadata = []
 
 for folder in distinct_folders:
     try:
-        # full_path_folder = os.path.join(working_directory, folder)
+        print(f"folder: {folder}, meta_file_name: {args.meta_file_name}, keyword: {args.keyword}")
+        full_path_folder = os.path.join(working_directory, folder)
         sorting_key = read_yaml(folder, args.meta_file_name).get(args.keyword)
         if sorting_key:
             metadata[folder] = sorting_key
@@ -165,6 +166,7 @@ for folder in distinct_folders:
             folders_without_metadata.append(folder)
     except Exception as e:
         logging.error(f"An error occurred while reading YAML for folder {full_path_folder}: {e}")
+        raise e
 
 
 # Sort folders
