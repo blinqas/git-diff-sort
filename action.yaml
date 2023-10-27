@@ -57,18 +57,24 @@ runs:
       run: |
         set -e
         PARAMS=""
+        if [[ ! -z "$META_FILE_NAME" ]]; then
+          PARAMS="$PARAMS --meta-file-name=$META_FILE_NAME"
+        fi
+        if [[ ! -z "$KEYWORD" ]]; then
+          PARAMS="$PARAMS --keyword=$KEYWORD"
+        fi
         if [[ ! -z "$COMPARING_BRANCH" ]]; then
-          PARAMS="$PARAMS --comparing_branch=$COMPARING_BRANCH"
+          PARAMS="$PARAMS --comparing-branch=$COMPARING_BRANCH"
         elif [[ ! -z "$COMPARING_TAG" ]]; then
-          PARAMS="$PARAMS --comparing_tag=$COMPARING_TAG"
+          PARAMS="$PARAMS --comparing-tag=$COMPARING_TAG"
         fi
         if [[ ! -z "$EXCLUDE_PATTERNS" ]]; then
-          PARAMS="$PARAMS --exclude_patterns=$EXCLUDE_PATTERNS"        
+          PARAMS="$PARAMS --exclude-patterns=$EXCLUDE_PATTERNS"        
         elif [[ ! -z "$INCLUDE_PATTERNS" ]]; then
-          PARAMS="$PARAMS --include_patterns=$INCLUDE_PATTERNS"
+          PARAMS="$PARAMS --include-patterns=$INCLUDE_PATTERNS"
         fi
         if [[ ! -z "$STRIP_PATH" ]]; then
-          PARAMS="$PARAMS --strip_path=$STRIP_PATH"
+          PARAMS="$PARAMS --strip-path=$STRIP_PATH"
         fi
         python_cmd="python3 ${{ github.action_path }}/src/main.py $PARAMS"
         echo python_cmd=$python_cmd

@@ -72,15 +72,15 @@ metadata = {}
 
 # Parse arguments
 parser = argparse.ArgumentParser(description='Process Git diff and sort folders.')
-parser.add_argument('--strip_path', type=str, help='Folder path to strip', required=False, default=None)
-parser.add_argument('--meta_file_name', type=str, help='Name of the YAML metadata file', required=False, default=None)
+parser.add_argument('--strip-path', type=str, help='Folder path to strip', required=False, default=None)
+parser.add_argument('--meta-file-name', type=str, help='Name of the YAML metadata file', required=False, default=None)
 parser.add_argument('--keyword', type=str, help='Keyword to look for in the YAML file', required=False, default=None)
 group = parser.add_mutually_exclusive_group(required=True) # Use mutually exclusive group to ensure only one of the two arguments is used
-group.add_argument('--comparing_branch', type=str, help='Branch to compare with', default=None)
-group.add_argument('--comparing_tag', type=str, help='Tag to compare with', default=None)
+group.add_argument('--comparing-branch', type=str, help='Branch to compare with', default=None)
+group.add_argument('--comparing-tag', type=str, help='Tag to compare with', default=None)
 group2 = parser.add_mutually_exclusive_group(required=False) # Use mutually exclusive group to ensure only one of the two arguments is used
-group2.add_argument('--exclude_patterns', type=str, help='Patterns for paths to exclude from git dir', default=None)
-group2.add_argument('--include_patterns', type=str, help='Patterns for paths to include in git dir', default=None)
+group2.add_argument('--exclude-patterns', type=str, help='Patterns for paths to exclude from git dir', default=None)
+group2.add_argument('--include-patterns', type=str, help='Patterns for paths to include in git dir', default=None)
 args = parser.parse_args()
 
 # Print the value of GITHUB_OUTPUT before any updates
