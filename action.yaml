@@ -16,46 +16,71 @@ inputs:
   comparing_tag:
     description: 'Tag to compare with'
     required: false
-  excluded_directories:
+  exclude_patterns:
     description: 'Comma separated list of directories to exclude from the git diff'
     required: false
+  include_patterns:
+    description: 'Comma separated list of directories to include in the git diff'
+    required: false
+  strip_path:
+    description: 'Strip part of the folder name from the output'
+    required: false
+
 runs:
   using: 'composite'
   steps:
-    - name: Check if Python 3 is installed
-      id: check_python
-      run: |
-        if python3 --version; then
-          echo "Python3 is installed"
-          echo "python_installed=0" >> $GITHUB_ENV
-        else
-          echo "Python3 is not installed"
-          echo "python_installed=1" >> $GITHUB_ENV
-        fi
-      shell: bash
-    - name: Set up Python
-      if: env.python_installed == 1
+    - name: Set up Python 3.x
       uses: actions/setup-python@v4
       with:
         python-version: '3.x'
+
     - name: Install dependencies
-      run: python3 -m pip install -r ${{ github.action_path }}/requirements.txt
-      shell: bash
-    - name: Git diff
-      id: display-git-diff
       run: |
-        IFS=',' read -ra exclude_dirs <<< "${{ inputs.excluded_directories }}"
-        for d in "${exclude_dirs[@]}"; do
-            exclude_patterns+=(\'':!'${d}'/*'\')
-        done
-        git diff --name-only "remotes/origin/${{ inputs.comparing_branch }}" "${exclude_patterns[@]}"
-        echo "exclude_patterns_str=${exclude_patterns[@]}" >> $GITHUB_OUTPUT
+        set -e
+        python3 -m pip install -r ${{ github.action_path }}/requirements.txt
       shell: bash
+
+    - name: Set Input Environment Variables
+      id: set-env
+      run: |
+        echo "META_FILE_NAME=${{ inputs.meta_file_name }}" >> $GITHUB_ENV
+        echo "KEYWORD=${{ inputs.keyword }}" >> $GITHUB_ENV
+        echo "COMPARING_BRANCH=${{ inputs.comparing_branch }}" >> $GITHUB_ENV
+        echo "COMPARING_TAG=${{ inputs.comparing_tag }}" >> $GITHUB_ENV
+        echo "EXCLUDE_PATTERNS=${{ inputs.exclude_patterns }}" >> $GITHUB_ENV
+        echo "INCLUDE_PATTERNS=${{ inputs.include_patterns }}" >> $GITHUB_ENV
+        echo "STRIP_PATH=${{ inputs.strip_path }}" >> $GITHUB_ENV
+      shell: bash
+
     - name: Run Python script
-      run: |
-        python3 ${{ github.action_path }}/src/main.py --meta_file_name=${{ inputs.meta_file_name }} --keyword=${{ inputs.keyword }} --comparing_branch=${{ inputs.comparing_branch }} --comparing_tag=${{ inputs.comparing_tag }} --exclude_patterns="${{ steps.display-git-diff.outputs.exclude_patterns_str }}"
       id: git-diff
+      run: |
+        set -e
+        PARAMS=""
+        if [[ ! -z "$META_FILE_NAME" ]]; then
+          PARAMS="$PARAMS --meta-file-name=$META_FILE_NAME"
+        fi
+        if [[ ! -z "$KEYWORD" ]]; then
+          PARAMS="$PARAMS --keyword=$KEYWORD"
+        fi
+        if [[ ! -z "$COMPARING_BRANCH" ]]; then
+          PARAMS="$PARAMS --comparing-branch=$COMPARING_BRANCH"
+        elif [[ ! -z "$COMPARING_TAG" ]]; then
+          PARAMS="$PARAMS --comparing-tag=$COMPARING_TAG"
+        fi
+        if [[ ! -z "$EXCLUDE_PATTERNS" ]]; then
+          PARAMS="$PARAMS --exclude-patterns=$EXCLUDE_PATTERNS"        
+        elif [[ ! -z "$INCLUDE_PATTERNS" ]]; then
+          PARAMS="$PARAMS --include-patterns=$INCLUDE_PATTERNS"
+        fi
+        if [[ ! -z "$STRIP_PATH" ]]; then
+          PARAMS="$PARAMS --strip-path=$STRIP_PATH"
+        fi
+        python_cmd="python3 ${{ github.action_path }}/src/main.py $PARAMS"
+        echo python_cmd=$python_cmd
+        eval $python_cmd
       shell: bash
+
 
 outputs:
   distinct_folders:
