@@ -94,7 +94,6 @@ jobs:
         echo "Folders sorted based on metadata in descending order: ${{ steps.git-diff-sort.outputs.folders_sorted_meta_dec }}"
 
 ```
-
 ## Contributing
 See CONTRIBUTING.md for contribution guidelines.
 
