@@ -20,9 +20,9 @@
 | `keyword`             | Keyword to look for in the YAML file.                     | None               | No       |
 | `comparing_branch`    | Branch to compare with. You can also use the word `default` to compare with the default branch. | None | No       |
 | `comparing_tag`    | Tag to compare with. You can also use the word `latest` to compare with the latest tag.  | None | No       |
-| `exclude_pattern`  | A pattern to exclude from the diff. Can't be used in combination with `include_pattern` | None | No       |
-| `include_pattern`  | A pattern to include in the diff. Can't be used in combination with `exclude_pattern` | None | No       |
-| `strip_pat`        | A pattern to strip from the diff path. | None | No       |
+| `exclude_patterns`  | A comma separated list with patterns to exclude from the diff. Can't be used in combination with `include_pattern` | None | No       |
+| `include_patterns`  | A comma separated list with patterns to include in the diff. Can't be used in combination with `exclude_pattern` | None | No       |
+| `strip_pat`        | A pattern to strip from the diff path output. | None | No       |
 
 ## Outputs
 
