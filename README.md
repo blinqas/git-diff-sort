@@ -20,6 +20,9 @@
 | `keyword`             | Keyword to look for in the YAML file.                     | None               | No       |
 | `comparing_branch`    | Branch to compare with. You can also use the word `default` to compare with the default branch. | None | No       |
 | `comparing_tag`    | Tag to compare with. You can also use the word `latest` to compare with the latest tag.  | None | No       |
+| `exclude_pattern`  | A pattern to exclude from the diff. Can't be used in combination with `include_pattern` | None | No       |
+| `include_pattern`  | A pattern to include in the diff. Can't be used in combination with `exclude_pattern` | None | No       |
+| `strip_pat`        | A pattern to strip from the diff path. | None | No       |
 
 ## Outputs
 
@@ -42,6 +45,7 @@
     meta_file_name: 'metadata.yaml'
     keyword: 'execution_order'
     comparing_tag: 'latest'
+    include_pattern: 'terraform/'
     # comparing_branch: 'main'(you can only use comparing_branch or comparing_tag, not both)
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
